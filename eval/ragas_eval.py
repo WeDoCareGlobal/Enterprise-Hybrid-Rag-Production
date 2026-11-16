@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Ragas evaluation pipeline for Enterprise Hybrid RAG.
 

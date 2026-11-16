@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Pydantic models for Enterprise Hybrid RAG API.
 
 Request/response schemas for FastAPI endpoints.

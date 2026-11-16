@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Enterprise Hybrid Retriever combining BM25 lexical search and Qdrant
 dense vector search with Reciprocal Rank Fusion (RRF).
 
@@ -9,6 +11,7 @@ and r_m(d) is the rank of document d in method m.
 """
 
 import asyncio
+import functools
 import re
 import threading
 import time
@@ -355,8 +358,9 @@ class EnterpriseHybridRetriever:
         total_start = time.time()
 
         # Run both retrieval methods concurrently
-        bm25_task = asyncio.to_thread(self.search_bm25, query, top_k=top_k * 2)
-        vector_task = asyncio.to_thread(self._search_vector_no_lock, query, top_k=top_k * 2, embedding_model=embedding_model)
+        loop = asyncio.get_event_loop()
+        bm25_task = loop.run_in_executor(None, functools.partial(self.search_bm25, query, top_k=top_k * 2))
+        vector_task = loop.run_in_executor(None, functools.partial(self._search_vector_no_lock, query, top_k=top_k * 2, embedding_model=embedding_model))
 
         bm25_result = await bm25_task
         vector_result = await vector_task
